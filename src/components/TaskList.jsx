@@ -10,9 +10,10 @@ function TaskList() {
                 setTasks(data);
             })
             .catch((err) => {
-                console.error("Error fecthing tasks:", err);
+                console.error("Error fetching tasks:", err);
             });
     }, []);
+
 
     return (
         <div>
