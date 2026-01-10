@@ -1,20 +1,89 @@
-<<<<<<< HEAD
-# React + Vite
+# Task Manager Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React frontend for the Task Manager full-stack application.
+It allows users to view tasks and create new tasks by interacting with a backend REST API.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- View all tasks fetched from the backend
+- Add new tasks using a simple UI
+- Real-time UI update without page refresh
+- Clean component-based architecture
+- Integrated with backend using Fetch API
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# task-manager-frontend
->>>>>>> 6e1760ba238557b7d93820d6296c7bf5a43bc488
+- React (Vite)
+- JavaScript
+- HTML & CSS
+- Fetch API
+
+---
+
+## 🔗 Backend Integration
+
+The frontend connects to a Node.js + Express backend running at:
+
+http://localhost:5000
+
+### APIs Used:
+- GET /tasks – Fetch all tasks
+- POST /tasks – Create a new task
+
+CORS is enabled in the backend to allow frontend communication.
+
+---
+
+## 📂 Project Structure
+
+src/
+├── components/
+│   ├── TaskList.jsx
+│   └── AddTask.jsx
+├── App.jsx
+├── main.jsx
+
+---
+
+## ▶️ How to Run Locally
+
+1. Clone the repository
+2. Install dependencies:
+   npm install
+3. Start the development server:
+   npm run dev
+4. Open in browser:
+   http://localhost:5173
+
+Make sure the backend server is running before using the app.
+
+---
+
+## 📌 Current Status
+
+Phase 1 – Frontend ↔ Backend Integration Completed
+
+- Backend CRUD implemented
+- Frontend connected successfully
+- MongoDB integration planned next
+
+---
+
+## 📖 Learning Outcome
+
+This project demonstrates:
+- React component design
+- State management using hooks
+- REST API consumption
+- Full-stack data flow understanding
+
+---
+
+## 👤 Author
+
+Swayam Patil  
+AIML Undergraduate | Full-Stack Development Learner
