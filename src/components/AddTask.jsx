@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function AddTask({ onTaskAdded }) {
+function AddTask() {
     const [title, setTitle] = useState("");
 
     const handleSubmit = (e) => {
@@ -18,11 +18,9 @@ function AddTask({ onTaskAdded }) {
             .then((res) => res.json())
             .then(() => {
                 setTitle("");
-                onTaskAdded();
+                window.location.reload(); // TEMP, safe for now
             })
-            .catch((err) => {
-                console.error("Error Adding Task: ", err);
-            });
+            .catch((err) => console.error(err));
     };
 
     return (
@@ -37,4 +35,5 @@ function AddTask({ onTaskAdded }) {
         </form>
     );
 }
+
 export default AddTask;

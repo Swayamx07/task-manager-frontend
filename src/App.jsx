@@ -1,20 +1,12 @@
-import {useState} from "react"
 import TaskList from "./components/TaskList";
 import AddTask from "./components/AddTask";
 
 function App() {
-
-  const[refresh, setRefresh] = useState(false);
-
-  const reloadTasks = () =>{
-    setRefresh(!refresh);
-  }
-
   return (
-    <div>
+    <div style={{ maxWidth: "500px", margin: "auto" }}>
       <h1>Task Manager</h1>
-      <AddTask onTaskAdded={reloadTasks} />
-      <TaskList key= {refresh}/>
+      <AddTask />
+      <TaskList />
     </div>
   );
 }
