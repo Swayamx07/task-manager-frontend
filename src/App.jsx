@@ -6,6 +6,8 @@ import TaskList from "./components/TaskList";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [sortOrder, setSortOrder] = useState("newest");
+
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -35,6 +37,15 @@ function App() {
       .then((data) => setTasks(data));
   }, []);
 
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (sortOrder === "newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+  });
+
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-6">
       <div className="max-w-4xl mx-auto pt-20">
@@ -61,7 +72,31 @@ function App() {
         </p>
 
         <AddTask setTasks={setTasks} />
-        <TaskList tasks={tasks} setTasks={setTasks} />
+
+        <div className="flex justify-end mt-6">
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="
+      text-sm
+      px-3 py-1.5
+      rounded-lg
+      bg-gray-100 text-gray-600
+      dark:bg-gray-800 dark:text-gray-300
+      border border-gray-200 dark:border-gray-700
+      outline-none
+      hover:bg-gray-200 dark:hover:bg-gray-700
+      transition
+    "
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+
+
+
+        <TaskList tasks={sortedTasks} setTasks={setTasks} />
       </div>
     </div>
   );

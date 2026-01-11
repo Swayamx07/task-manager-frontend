@@ -58,13 +58,27 @@ function TaskList({ tasks, setTasks }) {
                     key={task._id}
                     className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
                 >
-                    <p
-                        onClick={() => handleToggle(task)}
-                        className={`cursor-pointer text-lg ${task.completed ? "line-through text-gray-400" : ""
-                            }`}
-                    >
-                        {task.title}
-                    </p>
+                    <div className="flex items-start justify-between gap-4">
+                        <p
+                            onClick={() => handleToggle(task)}
+                            className={`cursor-pointer text-lg font-medium ${task.completed
+                                    ? "line-through text-gray-400"
+                                    : "text-gray-900 dark:text-gray-100"
+                                }`}
+                        >
+                            {task.title}
+                        </p>
+
+                        {task.createdAt && (
+                            <span className="text-xs text-gray-400 whitespace-nowrap">
+                                {new Date(task.createdAt).toLocaleDateString()}{" "}
+                                {new Date(task.createdAt).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                })}
+                            </span>
+                        )}
+                    </div>
 
                     {task.description && (
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -72,9 +86,6 @@ function TaskList({ tasks, setTasks }) {
                         </p>
                     )}
 
-                    <p className="text-xs text-gray-400 mt-2">
-                        Created: {formatDate(task.createdAt)}
-                    </p>
 
                     <div className="flex gap-4 mt-4 text-sm">
                         <button
