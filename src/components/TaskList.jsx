@@ -1,5 +1,11 @@
 import { useState } from "react";
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+};
+
+
 function TaskList({ tasks, setTasks }) {
     const [editingId, setEditingId] = useState(null);
     const [editTitle, setEditTitle] = useState("");
@@ -52,43 +58,34 @@ function TaskList({ tasks, setTasks }) {
                     key={task._id}
                     className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
                 >
-                    {editingId === task._id ? (
-                        <input
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700"
-                        />
-                    ) : (
-                        <p
-                            onClick={() => handleToggle(task)}
-                            className={`cursor-pointer ${task.completed
-                                    ? "line-through text-gray-400"
-                                    : ""
-                                }`}
-                        >
-                            {task.title}
+                    <p
+                        onClick={() => handleToggle(task)}
+                        className={`cursor-pointer text-lg ${task.completed ? "line-through text-gray-400" : ""
+                            }`}
+                    >
+                        {task.title}
+                    </p>
+
+                    {task.description && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            {task.description}
                         </p>
                     )}
 
+                    <p className="text-xs text-gray-400 mt-2">
+                        Created: {formatDate(task.createdAt)}
+                    </p>
+
                     <div className="flex gap-4 mt-4 text-sm">
-                        {editingId === task._id ? (
-                            <button
-                                onClick={() => handleEditSave(task._id)}
-                                className="text-green-500"
-                            >
-                                Save
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => {
-                                    setEditingId(task._id);
-                                    setEditTitle(task.title);
-                                }}
-                                className="text-blue-500"
-                            >
-                                Edit
-                            </button>
-                        )}
+                        <button
+                            onClick={() => {
+                                setEditingId(task._id);
+                                setEditTitle(task.title);
+                            }}
+                            className="text-blue-500"
+                        >
+                            Edit
+                        </button>
 
                         <button
                             onClick={() => handleDelete(task._id)}
@@ -98,6 +95,7 @@ function TaskList({ tasks, setTasks }) {
                         </button>
                     </div>
                 </div>
+
             ))}
         </div>
     );
