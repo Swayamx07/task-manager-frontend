@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function TaskList() {
-    const [tasks, setTasks] = useState([]);
-
-    useEffect(() => {
-        fetch("http://localhost:5000/tasks")
-            .then((res) => res.json())
-            .then((data) => setTasks(data));
-    }, []);
+function TaskList({ tasks, setTasks }) {
+    const [editingId, setEditingId] = useState(null);
+    const [editTitle, setEditTitle] = useState("");
 
     const handleToggle = (task) => {
         fetch(`http://localhost:5000/tasks/${task._id}`, {
@@ -33,27 +28,75 @@ function TaskList() {
         });
     };
 
+    const handleEditSave = (id) => {
+        fetch(`http://localhost:5000/tasks/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: editTitle }),
+        })
+            .then((res) => res.json())
+            .then((updatedTask) => {
+                setTasks((prev) =>
+                    prev.map((t) =>
+                        t._id === updatedTask._id ? updatedTask : t
+                    )
+                );
+                setEditingId(null);
+            });
+    };
+
     return (
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {tasks.map((task) => (
                 <div
                     key={task._id}
-                    className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition"
+                    className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
                 >
-                    <p
-                        onClick={() => handleToggle(task)}
-                        className={`cursor-pointer text-gray-800 ${task.completed ? "line-through text-gray-400" : ""
-                            }`}
-                    >
-                        {task.title}
-                    </p>
+                    {editingId === task._id ? (
+                        <input
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700"
+                        />
+                    ) : (
+                        <p
+                            onClick={() => handleToggle(task)}
+                            className={`cursor-pointer ${task.completed
+                                    ? "line-through text-gray-400"
+                                    : ""
+                                }`}
+                        >
+                            {task.title}
+                        </p>
+                    )}
 
-                    <button
-                        onClick={() => handleDelete(task._id)}
-                        className="mt-4 text-sm text-red-500 hover:underline"
-                    >
-                        Delete
-                    </button>
+                    <div className="flex gap-4 mt-4 text-sm">
+                        {editingId === task._id ? (
+                            <button
+                                onClick={() => handleEditSave(task._id)}
+                                className="text-green-500"
+                            >
+                                Save
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    setEditingId(task._id);
+                                    setEditTitle(task.title);
+                                }}
+                                className="text-blue-500"
+                            >
+                                Edit
+                            </button>
+                        )}
+
+                        <button
+                            onClick={() => handleDelete(task._id)}
+                            className="text-red-500"
+                        >
+                            Delete
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
