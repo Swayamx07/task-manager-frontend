@@ -59,15 +59,23 @@ function TaskList({ tasks, setTasks }) {
                     className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
                 >
                     <div className="flex items-start justify-between gap-4">
-                        <p
-                            onClick={() => handleToggle(task)}
-                            className={`cursor-pointer text-lg font-medium ${task.completed
-                                    ? "line-through text-gray-400"
-                                    : "text-gray-900 dark:text-gray-100"
-                                }`}
-                        >
-                            {task.title}
-                        </p>
+                        {editingId === task._id ? (
+                            <input
+                                type="text"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            />
+                        ) : (
+                            <p
+                                onClick={() => handleToggle(task)}
+                                className={`cursor-pointer text-lg ${task.completed ? "line-through text-gray-400" : ""
+                                    }`}
+                            >
+                                {task.title}
+                            </p>
+                        )}
+
 
                         {task.createdAt && (
                             <span className="text-xs text-gray-400 whitespace-nowrap">
@@ -88,15 +96,25 @@ function TaskList({ tasks, setTasks }) {
 
 
                     <div className="flex gap-4 mt-4 text-sm">
-                        <button
-                            onClick={() => {
-                                setEditingId(task._id);
-                                setEditTitle(task.title);
-                            }}
-                            className="text-blue-500"
-                        >
-                            Edit
-                        </button>
+                        {editingId === task._id ? (
+                            <button
+                                onClick={() => handleEditSave(task._id)}
+                                className="text-green-500"
+                            >
+                                Save
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    setEditingId(task._id);
+                                    setEditTitle(task.title);
+                                }}
+                                className="text-blue-500"
+                            >
+                                Edit
+                            </button>
+                        )}
+
 
                         <button
                             onClick={() => handleDelete(task._id)}
