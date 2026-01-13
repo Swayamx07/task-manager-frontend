@@ -92,7 +92,7 @@ function TaskList({ tasks, setTasks }) {
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {task.description}
                         </p>
-                    )}
+                    )};
 
 
                     <div className="flex gap-4 mt-4 text-sm">
