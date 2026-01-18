@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddTask from "./components/AddTask";
 import TaskList from "./components/TaskList";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -32,7 +33,7 @@ function App() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/tasks")
+    fetch(`${API_BASE_URL}/tasks`)
       .then((res) => res.json())
       .then((data) => setTasks(data));
   }, []);

@@ -1,14 +1,22 @@
 import { useState } from "react";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function AddTask({ setTasks }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        console.log("Submit clicked");
+        console.log("Title:", title);
+        console.log("Description:", description);
+        console.log("API URL:", import.meta.env.VITE_API_URL);
+
         if (!title.trim()) return;
 
-        fetch("http://localhost:5000/tasks", {
+        fetch(`${API_BASE_URL}/tasks`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, description }),
@@ -18,6 +26,9 @@ function AddTask({ setTasks }) {
                 setTasks((prev) => [newTask, ...prev]);
                 setTitle("");
                 setDescription("");
+            })
+            .catch((err) => {
+                console.error("Add task failed:", err);
             });
     };
 
@@ -39,7 +50,10 @@ function AddTask({ setTasks }) {
                 onChange={(e) => setDescription(e.target.value)}
             />
 
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-xl">
+            <button
+                type="submit"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-xl"
+            >
                 Add Task
             </button>
         </form>

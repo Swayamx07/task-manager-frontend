@@ -28,7 +28,7 @@ It allows users to view tasks and create new tasks by interacting with a backend
 
 The frontend connects to a Node.js + Express backend running at:
 
-http://localhost:5000
+${API_BASE_URL}
 
 ### APIs Used:
 - GET /tasks – Fetch all tasks

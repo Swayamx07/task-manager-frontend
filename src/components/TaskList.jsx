@@ -1,4 +1,5 @@
 import { useState } from "react";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -11,7 +12,7 @@ function TaskList({ tasks, setTasks }) {
     const [editTitle, setEditTitle] = useState("");
 
     const handleToggle = (task) => {
-        fetch(`http://localhost:5000/tasks/${task._id}`, {
+        fetch(`${API_BASE_URL}/tasks/${task._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ completed: !task.completed }),
@@ -27,7 +28,7 @@ function TaskList({ tasks, setTasks }) {
     };
 
     const handleDelete = (id) => {
-        fetch(`http://localhost:5000/tasks/${id}`, {
+        fetch(`${API_BASE_URL}/tasks/${id}`, {
             method: "DELETE",
         }).then(() => {
             setTasks((prev) => prev.filter((t) => t._id !== id));
@@ -35,7 +36,7 @@ function TaskList({ tasks, setTasks }) {
     };
 
     const handleEditSave = (id) => {
-        fetch(`http://localhost:5000/tasks/${id}`, {
+        fetch(`${API_BASE_URL}/tasks/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: editTitle }),
