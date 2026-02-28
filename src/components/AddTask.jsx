@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../utils/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -16,12 +17,10 @@ function AddTask({ setTasks }) {
 
         if (!title.trim()) return;
 
-        fetch(`${API_BASE_URL}/tasks`, {
+        apiFetch("/tasks", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, description }),
         })
-            .then((res) => res.json())
             .then((newTask) => {
                 setTasks((prev) => [newTask, ...prev]);
                 setTitle("");

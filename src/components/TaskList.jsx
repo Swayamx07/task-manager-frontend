@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../utils/api";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const formatDate = (dateString) => {
@@ -12,9 +13,8 @@ function TaskList({ tasks, setTasks }) {
     const [editTitle, setEditTitle] = useState("");
 
     const handleToggle = (task) => {
-        fetch(`${API_BASE_URL}/tasks/${task._id}`, {
+        apiFetch(`/tasks/${task._id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ completed: !task.completed }),
         })
             .then((res) => res.json())
@@ -28,30 +28,34 @@ function TaskList({ tasks, setTasks }) {
     };
 
     const handleDelete = (id) => {
-        fetch(`${API_BASE_URL}/tasks/${id}`, {
+        apiFetch(`/tasks/${id}`, {
             method: "DELETE",
         }).then(() => {
             setTasks((prev) => prev.filter((t) => t._id !== id));
         });
     };
 
-    const handleEditSave = (id) => {
-        fetch(`${API_BASE_URL}/tasks/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: editTitle }),
-        })
-            .then((res) => res.json())
-            .then((updatedTask) => {
-                setTasks((prev) =>
-                    prev.map((t) =>
-                        t._id === updatedTask._id ? updatedTask : t
-                    )
-                );
-                setEditingId(null);
-            });
-    };
+    const handleEditSave = async (id) => {
+        if (!editTitle.trim()) return;
 
+        try {
+            const updatedTask = await apiFetch(`/tasks/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({ title: editTitle.trim() }),
+            });
+
+            setTasks((prev) =>
+                prev.map((t) =>
+                    t._id === updatedTask._id ? updatedTask : t
+                )
+            );
+
+            setEditingId(null);
+            setEditTitle("");
+        } catch (err) {
+            console.error("Edit failed:", err);
+        }
+    };
     return (
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {tasks.map((task) => (
@@ -93,7 +97,7 @@ function TaskList({ tasks, setTasks }) {
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {task.description}
                         </p>
-                    )};
+                    )}
 
 
                     <div className="flex gap-4 mt-4 text-sm">
