@@ -1,38 +1,42 @@
 import { useState } from "react";
 import { apiFetch } from "../utils/api";
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
-};
-
+import { motion } from "framer-motion";
 
 function TaskList({ tasks, setTasks }) {
     const [editingId, setEditingId] = useState(null);
     const [editTitle, setEditTitle] = useState("");
 
-    const handleToggle = (task) => {
-        apiFetch(`/tasks/${task._id}`, {
-            method: "PUT",
-            body: JSON.stringify({ completed: !task.completed }),
-        })
-            .then((res) => res.json())
-            .then((updatedTask) => {
-                setTasks((prev) =>
-                    prev.map((t) =>
-                        t._id === updatedTask._id ? updatedTask : t
-                    )
-                );
+    const handleToggle = async (task) => {
+        try {
+            const newStatus = task.status === "done" ? "todo" : "done";
+
+            const updatedTask = await apiFetch(`/tasks/${task._id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    status: newStatus,
+                }),
             });
+
+            setTasks((prev) =>
+                prev.map((t) =>
+                    t._id === updatedTask._id ? updatedTask : t
+                )
+            );
+        } catch (err) {
+            console.error("Toggle failed:", err);
+        }
     };
 
-    const handleDelete = (id) => {
-        apiFetch(`/tasks/${id}`, {
-            method: "DELETE",
-        }).then(() => {
+    const handleDelete = async (id) => {
+        try {
+            await apiFetch(`/tasks/${id}`, {
+                method: "DELETE",
+            });
+
             setTasks((prev) => prev.filter((t) => t._id !== id));
-        });
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
     };
 
     const handleEditSave = async (id) => {
@@ -41,7 +45,9 @@ function TaskList({ tasks, setTasks }) {
         try {
             const updatedTask = await apiFetch(`/tasks/${id}`, {
                 method: "PUT",
-                body: JSON.stringify({ title: editTitle.trim() }),
+                body: JSON.stringify({
+                    title: editTitle.trim(),
+                }),
             });
 
             setTasks((prev) =>
@@ -56,32 +62,50 @@ function TaskList({ tasks, setTasks }) {
             console.error("Edit failed:", err);
         }
     };
+
     return (
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {tasks.map((task) => (
-                <div
+                <motion.div
                     key={task._id}
-                    className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
+                    whileHover={{ y: -4 }}
+                    className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5 rounded-2xl shadow-sm"
                 >
+                    {/* TOP ROW */}
                     <div className="flex items-start justify-between gap-4">
-                        {editingId === task._id ? (
+
+                        <div className="flex items-start gap-3 flex-1">
+
+                            {/* CHECKBOX */}
                             <input
-                                type="text"
-                                value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
-                                className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                type="checkbox"
+                                checked={task.status === "done"}
+                                onChange={() => handleToggle(task)}
+                                className="mt-1 w-4 h-4 accent-purple-600 cursor-pointer"
                             />
-                        ) : (
-                            <p
-                                onClick={() => handleToggle(task)}
-                                className={`cursor-pointer text-lg ${task.completed ? "line-through text-gray-400" : ""
-                                    }`}
-                            >
-                                {task.title}
-                            </p>
-                        )}
 
+                            {/* TITLE */}
+                            {editingId === task._id ? (
+                                <input
+                                    type="text"
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    className="w-full p-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white outline-none"
+                                />
+                            ) : (
+                                <p
+                                    className={`text-lg font-medium text-gray-900 dark:text-white transition
+                  ${task.status === "done" ? "line-through text-gray-400" : ""}`}
+                                >
+                                    {task.title}
+                                </p>
+                            )}
+                        </div>
 
+                        {/* DATE */}
                         {task.createdAt && (
                             <span className="text-xs text-gray-400 whitespace-nowrap">
                                 {new Date(task.createdAt).toLocaleDateString()}{" "}
@@ -93,18 +117,19 @@ function TaskList({ tasks, setTasks }) {
                         )}
                     </div>
 
+                    {/* DESCRIPTION */}
                     {task.description && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
                             {task.description}
                         </p>
                     )}
 
-
+                    {/* ACTIONS */}
                     <div className="flex gap-4 mt-4 text-sm">
                         {editingId === task._id ? (
                             <button
                                 onClick={() => handleEditSave(task._id)}
-                                className="text-green-500"
+                                className="text-green-500 hover:underline"
                             >
                                 Save
                             </button>
@@ -114,22 +139,20 @@ function TaskList({ tasks, setTasks }) {
                                     setEditingId(task._id);
                                     setEditTitle(task.title);
                                 }}
-                                className="text-blue-500"
+                                className="text-blue-500 hover:underline"
                             >
                                 Edit
                             </button>
                         )}
 
-
                         <button
                             onClick={() => handleDelete(task._id)}
-                            className="text-red-500"
+                            className="text-red-500 hover:underline"
                         >
                             Delete
                         </button>
                     </div>
-                </div>
-
+                </motion.div>
             ))}
         </div>
     );

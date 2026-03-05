@@ -52,8 +52,7 @@ export default function ActivityList() {
     }, [token]);
 
     return (
-        <div className="mt-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
-
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm p-6">
             <h3 className="text-xl font-semibold mb-6">
                 Recent Activity
             </h3>
@@ -65,7 +64,7 @@ export default function ActivityList() {
                     {activities.map((activity) => (
                         <li key={activity._id} className="flex flex-col">
 
-                            <span className="text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-700 dark:text-gray-100">
 
                                 {formatAction(activity.action)} task{" "}
                                 <span className="font-medium">
