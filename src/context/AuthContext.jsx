@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../utils/api";
+import { setToken as saveToken, getToken, clearToken } from "../utils/auth";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(localStorage.getItem("token"));
+    const [token, setToken] = useState(getToken());
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -16,6 +17,8 @@ export const AuthProvider = ({ children }) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
+            // Need this to receive the HttpOnly cookie from Render
+            credentials: "include",
         });
 
         const data = await res.json();
@@ -24,8 +27,8 @@ export const AuthProvider = ({ children }) => {
             throw new Error(data.message);
         }
 
-        localStorage.setItem("token", data.token);
-        setToken(data.token);
+        saveToken(data.accessToken);
+        setToken(data.accessToken);
     };
 
     const register = async (name, email, password) => {
@@ -44,9 +47,16 @@ export const AuthProvider = ({ children }) => {
         await login(email, password);
     };
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setToken(null);
+    const logout = async () => {
+        try {
+            // Tell backend to clear the cookie
+            await apiFetch("/logout", { method: "POST" });
+        } catch (err) {
+            console.error("Logout error", err);
+        } finally {
+            clearToken();
+            setToken(null);
+        }
     };
 
     return (
