@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            // Need this to receive the HttpOnly cookie from Render
             credentials: "include",
         });
 
@@ -27,10 +26,11 @@ export const AuthProvider = ({ children }) => {
             throw new Error(data.message);
         }
 
-        saveToken(data.accessToken);
-        setToken(data.accessToken);
-    };
 
+        localStorage.setItem("token", data.accessToken);
+        setToken(data.accessToken);
+
+    };
     const register = async (name, email, password) => {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
             method: "POST",
