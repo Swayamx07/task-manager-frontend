@@ -13,24 +13,31 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-            credentials: "include",
-        });
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+                credentials: "include",
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.message);
+            if (!res.ok) {
+                throw new Error(data.message);
+            }
+
+            localStorage.setItem("token", data.accessToken);
+            setToken(data.accessToken);
+
+            window.location.href = "/";
+
+        } catch (err) {
+            console.error("Login failed:", err.message);
+            alert(err.message);
         }
-
-
-        localStorage.setItem("token", data.accessToken);
-        setToken(data.accessToken);
-
     };
+
     const register = async (name, email, password) => {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
             method: "POST",
